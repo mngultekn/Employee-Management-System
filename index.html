@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Çalışan Yönetim Sistemi</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 5px;
+      }
+      .form-group button {
+        padding: 10px 15px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .form-group button:hover {
+        background-color: #45a049;
+      }
+      .results {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Çalışan Yönetim Sistemi</h1>
+
+    <div>
+      <h3>Çalışan Ekle</h3>
+      <div class="form-group">
+        <label for="isim">İsim:</label>
+        <input type="text" id="isim" placeholder="Çalışan ismi" />
+      </div>
+      <div class="form-group">
+        <label for="yas">Yaş:</label>
+        <input type="number" id="yas" placeholder="Çalışan yaşı" />
+      </div>
+      <div class="form-group">
+        <label for="departman">Departman:</label>
+        <input type="text" id="departman" placeholder="Çalışan departmanı" />
+      </div>
+      <div class="form-group">
+        <label for="maas">Maaş:</label>
+        <input type="number" id="maas" placeholder="Çalışan maaşı" />
+      </div>
+      <div class="form-group">
+        <button onclick="calisanEkleUI()">Çalışan Ekle</button>
+      </div>
+    </div>
+
+    <div>
+      <h3>Çalışan Sil</h3>
+      <div class="form-group">
+        <label for="silIsim">Silinecek Çalışanın İsmi:</label>
+        <input type="text" id="silIsim" placeholder="Çalışan ismi" />
+      </div>
+      <div class="form-group">
+        <button onclick="calisanSilUI()">Çalışan Sil</button>
+      </div>
+    </div>
+
+    <div>
+      <h3>Çalışanları Listele</h3>
+      <div class="form-group">
+        <label for="listeDepartman">Listelemek İçin Departman Girin:</label>
+        <input type="text" id="listeDepartman" placeholder="Departman ismi" />
+      </div>
+      <div class="form-group">
+        <button onclick="departmanaGoreListeleUI()">Listele</button>
+      </div>
+    </div>
+
+    <div class="results" id="results"></div>
+
+    <script>
+      let calisanlar = [];
+
+      function calisanEkle(isim, yas, departman, maas) {
+        if (!isim || yas < 18 || maas <= 0) {
+          return "Hata: Geçersiz çalışan bilgileri! İsim boş olamaz, yaş en az 18 olmalı, maaş pozitif olmalı.";
+        }
+
+        const varMi = calisanlar.some((calisan) => calisan.isim === isim);
+        if (varMi) {
+          return "Hata: Aynı isimde bir çalışan zaten mevcut.";
+        }
+
+        calisanlar.push({ isim, yas, departman, maas });
+        return `${isim} adlı çalışan başarıyla eklendi.`;
+      }
+
+      function calisanSil(isim) {
+        const calisanIndex = calisanlar.findIndex(
+          (calisan) => calisan.isim === isim
+        );
+
+        if (calisanIndex === -1) {
+          return "Hata: Bu isimde bir çalışan bulunamadı.";
+        }
+
+        calisanlar.splice(calisanIndex, 1);
+        return `${isim} adlı çalışan silindi.`;
+      }
+
+      function departmanaGoreListele(departman) {
+        const departmanCalisanlari = calisanlar.filter(
+          (calisan) => calisan.departman === departman
+        );
+
+        if (departmanCalisanlari.length === 0) {
+          return "Bu departmanda çalışan bulunmamaktadır.";
+        }
+
+        let sonuc = `${departman} departmanındaki çalışanlar:<br>`;
+        departmanCalisanlari.forEach((calisan) => {
+          sonuc += `İsim: ${calisan.isim}, Yaş: ${calisan.yas}, Maaş: ${calisan.maas} TL<br>`;
+        });
+        return sonuc;
+      }
+
+      function calisanEkleUI() {
+        const isim = document.getElementById("isim").value.trim();
+        const yas = parseInt(document.getElementById("yas").value);
+        const departman = document.getElementById("departman").value.trim();
+        const maas = parseInt(document.getElementById("maas").value);
+
+        const sonuc = calisanEkle(isim, yas, departman, maas);
+        document.getElementById("results").innerHTML = sonuc;
+      }
+
+      function calisanSilUI() {
+        const isim = document.getElementById("silIsim").value.trim();
+
+        const sonuc = calisanSil(isim);
+        document.getElementById("results").innerHTML = sonuc;
+      }
+
+      function departmanaGoreListeleUI() {
+        const departman = document
+          .getElementById("listeDepartman")
+          .value.trim();
+
+        const sonuc = departmanaGoreListele(departman);
+        document.getElementById("results").innerHTML = sonuc;
+      }
+    </script>
+  </body>
+</html>
